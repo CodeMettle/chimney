@@ -6,7 +6,7 @@ val versions = new {
 }
 
 val settings = Seq(
-  version := "0.3.0",
+  version := "0.3.0-CODEMETTLE",
   scalaVersion := versions.scalaVersion,
   crossScalaVersions := Seq("2.11.12", "2.12.7", "2.13.0-M5"),
   scalacOptions ++= Seq(
@@ -106,12 +106,17 @@ lazy val publishSettings = Seq(
   scmInfo := Some(
     ScmInfo(url("https://github.com/scalalandio/chimney"), "scm:git:git@github.com:scalalandio/chimney.git")
   ),
+  credentials += {
+    def file = "credentials-" + (if (isSnapshot.value) "snapshots" else "internal")
+
+    Credentials(Path.userHome / ".m2" / file)
+  },
   publishTo := {
-    val nexus = "https://oss.sonatype.org/"
+    val nexus = "http://maven.codemettle.com/"
     if (isSnapshot.value)
-      Some("snapshots" at nexus + "content/repositories/snapshots")
+      Some("snapshots" at nexus + "repository/snapshots")
     else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+      Some("releases" at nexus + "repository/internal")
   },
   publishMavenStyle := true,
   publishArtifact in Test := false,
